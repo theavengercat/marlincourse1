@@ -1,8 +1,27 @@
+<?php
+
+session_start();
+include('app/config.php');
+include('app/user.func.php');
+
+if(!isset($_SESSION['hash']) or (($_SESSION['id'] != $_GET['id']) and !isAdmin())) {
+	header("Location: index.php");
+	die();
+}
+
+
+if(isset($_SESSION['hash']) or (($_SESSION['id'] == $_GET['id']) or isAdmin()) and $_POST) {
+	editCredentionals($_POST, $_GET['id']);
+}
+
+$user = getuserById($_GET['id']);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Безопаность</title>
     <meta name="description" content="Chartist.html">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -34,34 +53,43 @@
     <main id="js-page-content" role="main" class="page-content mt-3">
         <div class="subheader">
             <h1 class="subheader-title">
-                <i class='subheader-icon fal fa-image'></i> Загрузить аватар
+                <i class='subheader-icon fal fa-lock'></i> Безопасность
             </h1>
 
         </div>
-        <form action="">
+
+            <? if(isset($_SESSION['message'])) { ?>
+			<div class="alert alert-success">
+                <?=$_SESSION['message'];?>
+			</div>
+			<? unset($_SESSION['message']); }?>
+        <form action="" method="post">
             <div class="row">
                 <div class="col-xl-6">
                     <div id="panel-1" class="panel">
                         <div class="panel-container">
                             <div class="panel-hdr">
-                                <h2>Текущий аватар</h2>
+                                <h2>Обновление эл. адреса и пароля</h2>
                             </div>
                             <div class="panel-content">
+                                <!-- email -->
                                 <div class="form-group">
-                                    <img src="img/demo/authors/josh.png" alt="" class="img-responsive" width="200">
+                                    <label class="form-label" for="simpleinput">Email</label>
+                                    <input name="email" type="text" id="simpleinput" class="form-control" value="<?=$user['email'];?>">
                                 </div>
 
+                                <!-- password -->
                                 <div class="form-group">
-                                    <label class="form-label" for="example-fileinput">Выберите аватар</label>
-                                    <input type="file" id="example-fileinput" class="form-control-file">
+                                    <label class="form-label" for="simpleinput">Пароль</label>
+                                    <input name="password" type="password" id="simpleinput" class="form-control">
                                 </div>
-
 
                                 <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                    <button class="btn btn-warning">Загрузить</button>
+                                    <button class="btn btn-warning">Изменить</button>
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>

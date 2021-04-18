@@ -1,3 +1,18 @@
+<?php
+
+session_start();
+include('app/config.php');
+include('app/user.func.php');
+
+if(!isset($_SESSION['hash']) or !$_GET['id']) {
+	header("Location: index.php");
+	die();
+}
+
+$user = getuserById($_GET['id']);
+if(!$user['photo']) $user['photo'] = '/img/noavatar.png';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,7 +50,7 @@
         <main id="js-page-content" role="main" class="page-content mt-3">
             <div class="subheader">
                 <h1 class="subheader-title">
-                    <i class='subheader-icon fal fa-user'></i> Иван Иванов
+                    <i class='subheader-icon fal fa-user'></i> <?=$user['name'];?>
                 </h1>
             </div>
             <div class="row">
@@ -45,19 +60,19 @@
                         <div class="row no-gutters row-grid">
                             <div class="col-12">
                                 <div class="d-flex flex-column align-items-center justify-content-center p-4">
-                                    <img src="img/demo/avatars/avatar-admin-lg.png" class="rounded-circle shadow-2 img-thumbnail" alt="">
+                                    <img src="<?=$user['photo'];?>" class="rounded-circle shadow-2 img-thumbnail" alt="">
                                     <h5 class="mb-0 fw-700 text-center mt-3">
-                                        Иван Иванов 
-                                        <small class="text-muted mb-0">Toronto, Canada</small>
+                                        <?=$user['name'];?> 
+                                        <small class="text-muted mb-0"><?=$user['address'];?></small>
                                     </h5>
                                     <div class="mt-4 text-center demo">
-                                        <a href="javascript:void(0);" class="fs-xl" style="color:#C13584">
+                                        <a href="<?=$user['insta'];?>" class="fs-xl" style="color:#C13584">
                                             <i class="fab fa-instagram"></i>
                                         </a>
-                                        <a href="javascript:void(0);" class="fs-xl" style="color:#4680C2">
+                                        <a href="<?=$user['vk'];?>" class="fs-xl" style="color:#4680C2">
                                             <i class="fab fa-vk"></i>
                                         </a>
-                                        <a href="javascript:void(0);" class="fs-xl" style="color:#0088cc">
+                                        <a href="<?=$user['tg'];?>" class="fs-xl" style="color:#0088cc">
                                             <i class="fab fa-telegram"></i>
                                         </a>
                                     </div>
@@ -66,11 +81,11 @@
                             <div class="col-12">
                                 <div class="p-3 text-center">
                                     <a href="tel:+13174562564" class="mt-1 d-block fs-sm fw-400 text-dark">
-                                        <i class="fas fa-mobile-alt text-muted mr-2"></i> +1 317-456-2564</a>
+                                        <i class="fas fa-mobile-alt text-muted mr-2"></i> <?=$user['phone'];?></a>
                                     <a href="mailto:oliver.kopyov@marlin.ru" class="mt-1 d-block fs-sm fw-400 text-dark">
-                                        <i class="fas fa-mouse-pointer text-muted mr-2"></i> oliver.kopyov@marlin.ru</a>
+                                        <i class="fas fa-mouse-pointer text-muted mr-2"></i> <?=$user['email'];?></a>
                                     <address class="fs-sm fw-400 mt-4 text-muted">
-                                        <i class="fas fa-map-pin mr-2"></i> Восточные Королевства, Штормград 15
+                                        <i class="fas fa-map-pin mr-2"></i> <?=$user['address'];?>
                                     </address>
                                 </div>
                             </div>

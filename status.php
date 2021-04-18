@@ -1,8 +1,25 @@
+<?php
+session_start();
+include('app/config.php');
+include('app/user.func.php');
+
+if(!isset($_SESSION['hash']) or (($_SESSION['id'] != $_GET['id']) and !isAdmin())) {
+	header("Location: index.php");
+	die();
+}
+
+
+if(isset($_SESSION['hash']) or (($_SESSION['id'] == $_GET['id']) or isAdmin()) and $_POST) {
+	editCredentionals($_POST, $_GET['id']);
+}
+
+$user = getuserById($_GET['id']);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Безопаность</title>
+    <title>Document</title>
     <meta name="description" content="Chartist.html">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -34,40 +51,45 @@
     <main id="js-page-content" role="main" class="page-content mt-3">
         <div class="subheader">
             <h1 class="subheader-title">
-                <i class='subheader-icon fal fa-lock'></i> Безопасность
+                <i class='subheader-icon fal fa-sun'></i> Установить статус
             </h1>
 
+            <? if(isset($_SESSION['message'])) { ?>
+			<div class="alert alert-success">
+                <?=$_SESSION['message'];?>
+			</div>
+			<? unset($_SESSION['message']); }?>
+
         </div>
-        <form action="">
+        <form action="" method="post">
             <div class="row">
                 <div class="col-xl-6">
                     <div id="panel-1" class="panel">
                         <div class="panel-container">
                             <div class="panel-hdr">
-                                <h2>Обновление эл. адреса и пароля</h2>
+                                <h2>Установка текущего статуса</h2>
                             </div>
                             <div class="panel-content">
-                                <!-- email -->
-                                <div class="form-group">
-                                    <label class="form-label" for="simpleinput">Email</label>
-                                    <input type="text" id="simpleinput" class="form-control" value="john@example.com">
-                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <!-- status -->
+                                        <div class="form-group">
+                                            <label class="form-label" for="example-select">Выберите статус</label>
+                                            <select name="status" class="form-control" id="example-select">
 
-                                <!-- password -->
-                                <div class="form-group">
-                                    <label class="form-label" for="simpleinput">Пароль</label>
-                                    <input type="password" id="simpleinput" class="form-control">
-                                </div>
+												<? foreach(getAllStatuses() as $v) { 
+													if($v['id'] == $user['status']) 
+														echo "<option selected value='{$v['id']}'>{$v['name']}</option>";
+													else
+														echo "<option value='{$v['id']}'>{$v['name']}</option>";
 
-                                <!-- password confirmation-->
-                                <div class="form-group">
-                                    <label class="form-label" for="simpleinput">Подтверждение пароля</label>
-                                    <input type="password" id="simpleinput" class="form-control">
-                                </div>
-
-
-                                <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                    <button class="btn btn-warning">Изменить</button>
+												} ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mt-3 d-flex flex-row-reverse">
+                                        <button class="btn btn-warning">Set Status</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
